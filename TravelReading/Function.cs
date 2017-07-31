@@ -30,13 +30,17 @@ namespace TravelReading
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
             var requestType = input.GetRequestType();
-            if (requestType == typeof(IntentRequest))
+            if (requestType == typeof(LaunchRequest))
+            {
+                return MakeSkillResponse($"Welcome to { INVOCATION_NAME } Info. To find stops near you say something like, find stops nearby", true);
+            }
+            else if (requestType == typeof(IntentRequest))
             {
                 var intentRequest = input.Request as IntentRequest;
-                var postcodeRequested = intentRequest.Intent.Slots["postcode"].Value;
+                var postcodeRequested = "RG2 0AQ"; //intentRequest.Intent.Slots["postcode"].Value;
 
-                if (string.IsNullOrEmpty(postcodeRequested))
-                    return MakeSkillResponse("I am sorry I didn't understand the postcode you are trying to search. Please ask again.", false);
+                //if (string.IsNullOrEmpty(postcodeRequested))
+                //    return MakeSkillResponse("I am sorry I didn't understand the postcode you are trying to search. Please ask again.", false);
 
                 var postcodeInfo = await GetCoOrdinatesForPostCode(postcodeRequested, context);
 
@@ -44,17 +48,17 @@ namespace TravelReading
 
                 string stopsInfo = null;
 
-                stopsInfo = string.Join(",", busStops.Select(b => b.stop_name + " bearing " + b.bearing).ToList());
+                stopsInfo = string.Join(",", busStops.Select(b => b.stop_name + " towards " + GetFullDirection(b.bearing)).ToList());
 
-                return MakeSkillResponse($"There are { busStops.Count().ToString() } stops near { postcodeRequested }. They are { stopsInfo }.", true);
+                return MakeSkillResponse($"I will now list { busStops.Count().ToString() } stops near { postcodeRequested }. They are { stopsInfo }. I will soon be able to tell bus times for those stops. Thank you.", true);
             }
             else
             {
-                return MakeSkillResponse($"I don't know how to handle this intent. Please say something like Alexa, ask { INVOCATION_NAME } for nearby bus stops", true);
+                return MakeSkillResponse($"I don't know how to help you with that. Please say something like Alexa, ask { INVOCATION_NAME } for nearby bus stops", false);
             }
         }
 
-        private SkillResponse MakeSkillResponse(string outputSpeech, bool shouldEndSession, string repromptText = "Reprompting. To exit, say, exit.")
+        private SkillResponse MakeSkillResponse(string outputSpeech, bool shouldEndSession, string repromptText = "To find stops near you say something like, find stops nearby.")
         {
             var response = new ResponseBody
             {
@@ -139,6 +143,39 @@ namespace TravelReading
         {
             public string longitude { get; set; }
             public string latitude { get; set; }
+        }
+
+        private string GetFullDirection(string direction)
+        {
+            switch (direction)
+            {
+                case "E":
+                    return "East";
+
+                case "W":
+                    return "West";
+
+                case "N":
+                    return "North";
+
+                case "S":
+                    return "South";
+
+                case "SE":
+                    return "South East";
+
+                case "NE":
+                    return "North East";
+
+                case "SW":
+                    return "South West";
+
+                case "NW":
+                    return "North West";
+
+                default:
+                    return direction;
+            }
         }
     }
 }
