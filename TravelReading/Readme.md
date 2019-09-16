@@ -1,4 +1,4 @@
-# AWS Lambda Empty Function Project
+# Travel Reading: Amazon Alexa Skill
 
 This starter project consists of:
 * Function.cs - class file containing a class with a single function handler method
