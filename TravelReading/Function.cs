@@ -19,8 +19,8 @@ namespace TravelReading
         private static HttpClient _httpClient;
 
         public const string INVOCATION_NAME = "Reading Travel";
-        public const string TRAVEL_API_KEY = "e29bef24b01ad7046ce0e738109242ab";
-        public const string TRAVEL_API_ID = "e7f6be84";
+        public const string TRAVEL_API_KEY = "";
+        public const string TRAVEL_API_ID = "";
 
         public Function()
         {
@@ -37,7 +37,7 @@ namespace TravelReading
             else if (requestType == typeof(IntentRequest))
             {
                 var intentRequest = input.Request as IntentRequest;
-                var postcodeRequested = "RG2 0AQ"; //intentRequest.Intent.Slots["postcode"].Value;
+                var postcodeRequested = "SW12 0AD"; //intentRequest.Intent.Slots["postcode"].Value;
 
                 //if (string.IsNullOrEmpty(postcodeRequested))
                 //    return MakeSkillResponse("I am sorry I didn't understand the postcode you are trying to search. Please ask again.", false);
